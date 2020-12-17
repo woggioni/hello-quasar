@@ -33,11 +33,11 @@ class ArchiveClassLoaderTest {
     @Test
     fun test() {
         val p = Paths.get("/home/r3/checkpoints_debug.zip")
-        val flowLoader = FlowLoader(p)
-        val cls = flowLoader.classLoader.loadClass(DiscoveryEntry::class.java.name)
-        val cls2 = flowLoader.classLoader.loadClass("net.corda.splitcorda.flows.SuspendedFlow")
-        val cls3 = flowLoader.classLoader.loadClass("co.paralleluniverse.fibers.SuspendExecution")
-        println(cls3)
+//        val flowLoader = FlowLoader(p)
+//        val cls = flowLoader.classLoader.loadClass(DiscoveryEntry::class.java.name)
+//        val cls2 = flowLoader.classLoader.loadClass("net.corda.splitcorda.flows.SuspendedFlow")
+//        val cls3 = flowLoader.classLoader.loadClass("co.paralleluniverse.fibers.SuspendExecution")
+//        println(cls3)
 //        val fiberFile = flowLoader.fibers().first()
 //        flowLoader.fiber(fiberFile)
     }

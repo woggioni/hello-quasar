@@ -24,6 +24,32 @@ data class Person(
         val age: Int
 ) : Serializable
 
+
+class MyFiber : Fiber<Unit>() {
+    @Suspendable
+    fun sleep(duration : Duration = Duration.ofMillis(0L)) {
+        Fiber.sleep(duration.toMillis())
+    }
+
+    @Suspendable
+    override fun run() {
+        val p = Person("Walter", "Oggioni", 32)
+        println("Fiber started")
+//            park()
+        foo(y = 5.0)
+        println("Fiber resumed")
+    }
+
+    private fun foo(n : Int = 0, s : String = "") {
+        sleep()
+    }
+
+    @Suspendable
+    @JvmOverloads
+    private fun foo(n : Int = 0, y : Double = 0.0) {
+        sleep()
+    }
+}
 object App {
     val om = ObjectMapper()
 
@@ -42,7 +68,7 @@ object App {
             override fun run(): String {
                 val p = Person("Walter", "Oggioni", 32)
                 println("Fiber started")
-//            park()
+            park()
                 parkAndSerialize { f: Fiber<*>, _: ByteArraySerializer ->
                     Files.newOutputStream(fiberFile).use {
                         serializer.write(it, f)
@@ -89,29 +115,14 @@ object App {
 
     @JvmStatic
     fun main(args: Array<String>) {
-        val runtimeMxBean = ManagementFactory.getRuntimeMXBean()
-        val arguments = runtimeMxBean.inputArguments
-        println(arguments)
+//        val runtimeMxBean = ManagementFactory.getRuntimeMXBean()
+//        val arguments = runtimeMxBean.inputArguments
+//        println(arguments)
 
-        run(Action.serialize)
-        run(Action.deserialize)
+//        run(Action.serialize)
+//        run(Action.deserialize)
 
-        val fiber = object : Fiber<Unit>() {
-
-            @Suspendable
-            fun sleep(duration : Duration = Duration.ofMillis(0L)) {
-                sleep(duration.toMillis())
-            }
-
-            @Suspendable
-            override fun run() {
-                val p = Person("Walter", "Oggioni", 32)
-                println("Fiber started")
-//            park()
-                sleep()
-                println("Fiber resumed")
-            }
-        }
+        val fiber = MyFiber()
 
         fiber.start()
 
