@@ -1,21 +1,10 @@
 package net.corda.quasar.hello
 
-import com.github.benmanes.caffeine.cache.Caffeine
-import net.corda.core.internal.toPath
-import net.corda.core.serialization.internal.SerializationEnvironment
-import net.corda.nodeapi.internal.rpc.client.AMQPClientSerializationScheme
-import net.corda.nodeapi.internal.serialization.amqp.AMQPServerSerializationScheme
-import net.corda.nodeapi.internal.serialization.kryo.KRYO_CHECKPOINT_CONTEXT
-import net.corda.nodeapi.internal.serialization.kryo.KryoCheckpointSerializer
-import net.corda.serialization.internal.*
-import net.corda.serialization.internal.amqp.SerializationFactoryCacheKey
-import net.corda.serialization.internal.amqp.SerializerFactory
-import org.apache.activemq.artemis.core.cluster.DiscoveryEntry
 import org.junit.jupiter.api.Test
 import java.nio.file.FileSystems
 import java.nio.file.Files
 import java.nio.file.Paths
-import java.util.*
+import java.util.UUID
 import kotlin.streams.asSequence
 
 interface Foo {

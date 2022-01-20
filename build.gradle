@@ -1,0 +1,89 @@
+plugins {
+    id "org.jetbrains.kotlin.jvm" apply false
+    id "application"
+}
+
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+allprojects {
+    apply plugin: "org.jetbrains.kotlin.jvm"
+    repositories {
+        maven {
+            url = getProperty('r3.artifactory.url') + "/corda-releases"
+            content {
+                includeGroup 'net.corda'
+            }
+        }
+        maven {
+            url = getProperty('r3.artifactory.url') + "/corda-dependencies"
+            content {
+                includeGroup 'co.paralleluniverse'
+                includeGroup 'com.github.bft-smart'
+                includeGroup 'net.corda.djvm'
+                includeGroup 'com.palominolabs.metrics'
+                includeGroup 'org.crashub'
+            }
+        }
+        maven {
+            url = getProperty('r3.artifactory.url') + "/corda-dependencies"
+            content {
+                includeGroup 'com.github.bft-smart'
+            }
+            metadataSources {
+                artifact()
+            }
+        }
+        mavenCentral()
+    }
+
+    dependencies {
+        testRuntimeOnly group: "org.junit.jupiter", name: "junit-jupiter-engine", version: getProperty("junit.version")
+        testImplementation group: "org.junit.jupiter", name: "junit-jupiter-api", version: getProperty("junit.version")
+        testImplementation group: "org.junit.jupiter", name: "junit-jupiter-params", version: property("junit.version")
+    }
+
+    tasks.withType(Test).configureEach {
+        useJUnitPlatform()
+    }
+    tasks.withType(KotlinCompile).configureEach {
+        kotlinOptions {
+            languageVersion = getProperty('kotlin.target.version')
+            apiVersion = getProperty('kotlin.target.version')
+            jvmTarget = JavaVersion.VERSION_1_8
+            javaParameters = true
+        }
+    }
+}
+
+def quasarNotation = [group: 'co.paralleluniverse', name: 'quasar-core', version: getProperty('quasar.version')]
+
+configurations {
+    quasar {
+        transitive = false
+        canBeConsumed = false
+        visible = false
+    }
+}
+
+dependencies {
+    quasar quasarNotation
+
+    implementation group: "org.jetbrains.kotlin", name: "kotlin-stdlib-jdk8", version: getProperty("kotlin.version")
+    implementation quasarNotation
+
+    implementation group: "com.fasterxml.jackson.core", name: "jackson-databind", version: property("jackson.version")
+
+    testImplementation group: 'net.corda', name: 'corda-node', version: getProperty('corda.version')
+    testImplementation group: 'net.corda', name: 'corda-node-api', version: getProperty('corda.version')
+    testImplementation group: 'net.corda', name: 'corda-serialization', version: getProperty('corda.version')
+}
+
+application {
+    mainClassName = "net.corda.quasar.hello.App"
+    applicationDefaultJvmArgs += ["-javaagent:${project.configurations.quasar.singleFile}"]
+}
+
+wrapper {
+    gradleVersion = getProperty('gradle.version')
+    distributionType = Wrapper.DistributionType.BIN
+}

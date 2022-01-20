@@ -8,7 +8,6 @@ import co.paralleluniverse.io.serialization.ByteArraySerializer
 import co.paralleluniverse.io.serialization.kryo.KryoSerializer
 import com.fasterxml.jackson.databind.ObjectMapper
 import java.io.Serializable
-import java.lang.management.ManagementFactory
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.time.Duration
@@ -19,15 +18,15 @@ enum class Action {
 }
 
 data class Person(
-        val name: String,
-        val surname: String,
-        val age: Int
+    val name: String,
+    val surname: String,
+    val age: Int
 ) : Serializable
 
 
 class MyFiber : Fiber<Unit>() {
     @Suspendable
-    fun sleep(duration : Duration = Duration.ofMillis(0L)) {
+    fun sleep(duration: Duration = Duration.ofMillis(0L)) {
         Fiber.sleep(duration.toMillis())
     }
 
@@ -35,21 +34,21 @@ class MyFiber : Fiber<Unit>() {
     override fun run() {
         val p = Person("Walter", "Oggioni", 32)
         println("Fiber started")
-//            park()
+//        park()
         foo(y = 5.0)
         println("Fiber resumed")
     }
 
-    private fun foo(n : Int = 0, s : String = "") {
+    private fun foo(n: Int = 0, s: String = "") {
         sleep()
     }
 
     @Suspendable
-    @JvmOverloads
-    private fun foo(n : Int = 0, y : Double = 0.0) {
+    fun foo(n: Int = 0, y: Double = 0.0) {
         sleep()
     }
 }
+
 object App {
     val om = ObjectMapper()
 
@@ -61,14 +60,14 @@ object App {
 
     fun newFiber(): Fiber<String> {
         val SERIALIZER_BLOCKER = Fiber::class.java.getDeclaredField("SERIALIZER_BLOCKER")
-                .apply { isAccessible = true }
-                .get(null)
+            .apply { isAccessible = true }
+            .get(null)
         return object : Fiber<String>() {
             @Suspendable
             override fun run(): String {
                 val p = Person("Walter", "Oggioni", 32)
                 println("Fiber started")
-            park()
+//                park()
                 parkAndSerialize { f: Fiber<*>, _: ByteArraySerializer ->
                     Files.newOutputStream(fiberFile).use {
                         serializer.write(it, f)

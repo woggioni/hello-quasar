@@ -1,0 +1,29 @@
+plugins {
+    id 'org.jetbrains.kotlin.jvm'
+    id 'application'
+}
+
+
+configurations {
+    quasar {
+        transitive = false
+        canBeConsumed = false
+        visible = false
+    }
+}
+
+def quasarNotation = [group: 'co.paralleluniverse', name: 'quasar-core', version: getProperty('quasar.version')]
+
+dependencies {
+    quasar quasarNotation
+    compileOnly quasarNotation
+    implementation group: "org.jetbrains.kotlin", name: "kotlin-stdlib-jdk8", version: getProperty("kotlin.version")
+
+    implementation group: "com.fasterxml.jackson.core", name: "jackson-databind", version: property("jackson.version")
+}
+
+
+application {
+    mainClass = "net.woggioni.hello.quasar.Main"
+    applicationDefaultJvmArgs += ["-javaagent:${project.configurations.quasar.singleFile}"]
+}

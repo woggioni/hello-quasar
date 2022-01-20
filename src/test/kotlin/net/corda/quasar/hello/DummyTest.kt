@@ -1,6 +1,5 @@
 package net.corda.quasar.hello
 
-import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Test
 
 object Bar2 {
